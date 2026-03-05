@@ -1,0 +1,94 @@
+# ===============================
+# = Spring Profiles
+# ===============================
+spring:
+  profiles:
+    locale: en
+  # ===============================
+  # = Spring Cassandra.
+  # ===============================
+  cassandra:
+    contact-points: 127.0.0.1
+    keyspace-name: student_enrollment
+    local-datacenter: datacenter1
+    username: cassandra
+    password: cassandra
+    port: 9042
+    schema-action: NONE
+    request:
+      timeout: 10000ms
+    pool: {}
+
+  # ===============================
+  # = Spring Kafka.
+  # ===============================
+  kafka:
+    # = 1. Kafka General properties.
+    properties:
+      bootstrap:
+        servers: localhost:9092
+      schema:
+        registry:
+          url: mock://DataServiceApplicationTests
+    # = 2. Kafka Consumer (For Receiving Protos).
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    # = 3. Kafka Producer (For sending Avros).
+    producer:
+      key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      properties:
+        retries: 10
+        request-timeout-ms-config: 120000
+    # = 4. Kafka Streams.
+    streams:
+      application-id: student_enrollment_service
+      properties:
+        processing:
+          guarantee: exactly_once
+        replication:
+          factor: 1
+        retries: 3
+        retry:
+          backoff:
+            ms: 250
+        commit:
+          interval:
+            ms: 100
+        state:
+          dir: /tmp/kafka-streams
+        num:
+          stream:
+            threads: 1
+        "[default.deserialization.exception.handler]": org.apache.kafka.streams.errors.LogAndContinueExceptionHandler
+        "[default.production.exception.handler]": com.flipfoundry.platform.data.service.kafka.utils.CustomProductionExceptionHandler
+
+# ===============================
+# = Actuator.
+# ===============================
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: ALWAYS
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health
+  health:
+    defaults:
+      enabled: false
+  server:
+    port: 9001
+
+# ===============================
+# = Server Ports.
+# ===============================
+server:
+  port: 8700
+
+

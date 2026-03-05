@@ -1,0 +1,71 @@
+<configuration>
+	<property name="LOG_HOME" value="${user.home}/logs/booking-data-service" />
+	
+	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+				<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+            </layout>
+		</encoder>
+	</appender>
+
+	<appender name="consoleLocalUseOnly" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{"ISO8601", UTC}  %p %t %c{5} %M - %m%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="dailyRollingFileAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>${LOG_HOME}/daily/daily.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>2MB</MaxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<Pattern>%d{yyyy-MM-dd_hh:mm:ss} [%thread] %-5level %logger{35} -
+				%msg %n</Pattern>
+		</encoder>
+	</appender>
+
+	<springProfile name="default">
+		<logger name="com.flipfoundry.platform.data" additivity="false">
+			<level value="DEBUG" />
+			<appender-ref ref="dailyRollingFileAppender" />
+			<appender-ref ref="consoleLocalUseOnly" />
+		</logger>
+		<root level="INFO">
+			<appender-ref ref="dailyRollingFileAppender" />
+			<appender-ref ref="consoleLocalUseOnly" />
+		</root>
+	</springProfile>
+
+	<springProfile name="local">
+		<logger name="com.flipfoundry.platform.data" additivity="false">
+			<level value="DEBUG" />
+			<appender-ref ref="consoleAppender" />
+		</logger>
+		<root level="INFO">
+			<appender-ref ref="consoleAppender" />
+		</root>
+	</springProfile>
+
+
+	<springProfile name="deploy">
+		<logger name="com.flipfoundry.platform.data" additivity="false">
+			<level value="ERROR" />
+			<appender-ref ref="consoleAppender" />
+		</logger>
+		<root level="ERROR">
+			<appender-ref ref="consoleAppender" />
+		</root>
+	</springProfile>
+
+
+</configuration>

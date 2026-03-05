@@ -1,0 +1,61 @@
+# ===============================
+# = SPRING DEFAULTS FOR LOCAL.
+# ===============================
+spring:
+  # ===============================
+  # = Spring Cassandra.
+  # ===============================
+  cassandra:
+    contact-points: cass
+    keyspace-name: student_enrollment
+    local-datacenter: datacenter1
+    username: cassandra
+    password: cassandra
+    port: 9042
+    schema-action: NONE
+
+  # ===============================
+  # = Spring Kafka.
+  # ===============================
+  kafka:
+    # = 1. Kafka General properties.
+    properties:
+      bootstrap:
+        servers: broker:9092
+      schema:
+        registry:
+          url: http://schema-registry:8081
+    # = 2. kafka Consumer (For Receiving Protos).
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    # = 3. Kafka Producer (For sending Avros).
+    producer:
+      key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      properties:
+        retries: 10
+        request-timeout-ms-config: 120000
+    # = 4. Kafka Streams.
+    streams:
+      application-id: student_enrollment_service
+      properties:
+        processing:
+          guarantee: exactly_once
+        replication:
+          factor: 1
+        retries: 3
+        retry:
+          backoff:
+            ms: 250
+        commit:
+          interval:
+            ms: 100
+        state:
+          dir: /tmp/kafka-streams
+        num:
+          stream:
+            threads: 1
+        "[default.deserialization.exception.handler]": org.apache.kafka.streams.errors.LogAndContinueExceptionHandler
+        "[default.production.exception.handler]": com.flipfoundry.platform.data.service.kafka.utils.CustomProductionExceptionHandler

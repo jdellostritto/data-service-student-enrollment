@@ -1,0 +1,32 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+      group-id: test-group
+      auto-offset-reset: earliest
+    streams:
+      bootstrap-servers: localhost:9092
+      application-id: kafka-processor-spring-test
+      default-key-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+      default-value-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+
+kafka:
+  topics:
+    students: students
+    enrollments: student-enrollments
+    student-profiles: student-profiles
+    dlq: dlq
+  schema-registry:
+    url: http://localhost:8081
+
+logging:
+  level:
+    root: INFO
+    com.flipfoundry.platform.data.service: DEBUG
+    org.apache.kafka: WARN
+    org.springframework.kafka: INFO

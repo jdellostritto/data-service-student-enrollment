@@ -1,0 +1,44 @@
+flowchart TD
+    subgraph INPUT["Input Topics"]
+        T1([students\nbyte key/value])
+        T2([student-enrollments\nbyte key/value])
+    end
+
+    subgraph KTABLE["KtableProcessor"]
+        direction TB
+
+        subgraph STUDENTS["Students Pipeline"]
+            S1[Consume Raw Bytes] --> S2{Deserialize\nValidation}
+            S2 -- invalid --> S3([students-dlq])
+            S2 -- valid --> S4[Map to\nKStream&lt;String, Student&gt;]
+            S4 --> S5[GroupByKey\non student_id]
+            S5 --> S6[Reduce\nkeep latest by updated_at]
+            S6 --> S7[(STUDENTS-MV\nState Store\nKTable&lt;String, Student&gt;)]
+        end
+
+        subgraph ENROLLMENTS["Enrollments Pipeline"]
+            E1[Consume Raw Bytes] --> E2{Deserialize\nValidation}
+            E2 -- invalid --> E3([enrollments-dlq])
+            E2 -- valid --> E4[Map to\nKStream&lt;String, StudentEnrollment&gt;]
+            E4 --> E5[GroupByKey\non enrollment_id]
+            E5 --> E6[Reduce\nkeep latest by updated_at]
+            E6 --> E7[(ENROLLMENTS-MV\nState Store\nKTable&lt;String, StudentEnrollment&gt;)]
+        end
+    end
+
+    subgraph JOIN["JoinProcessor"]
+        J1[FK Join\nEnrollment.student_id --> Student.student_id]
+        J2[StudentProfileBuilder\nbuild Student + Enrollment]
+        J3[(STUDENT-PROFILES-MV\nState Store)]
+        J4[(Cassandra\nstudent_enrollment.student_profiles)]
+        J5([student-profiles\nKTable&lt;String, StudentProfile&gt;])
+    end
+
+    T1 --> S1
+    T2 --> E1
+    S7 --> J1
+    E7 --> J1
+    J1 --> J2
+    J2 --> J3
+    J2 --> J4
+    J3 --> J5

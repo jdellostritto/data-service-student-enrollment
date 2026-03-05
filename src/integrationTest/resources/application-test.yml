@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: data-service-student-enrollment-test
+  
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.cassandra.CassandraDataAutoConfiguration
+  
+  kafka:
+    bootstrap-servers: localhost:29092
+    properties:
+      schema.registry.url: http://localhost:8081
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+      group-id: test-group
+      auto-offset-reset: earliest
+    streams:
+      application-id: data-service-student-enrollment-test
+      num-stream-threads: 1
+
+logging:
+  level:
+    root: WARN
+    org.apache.kafka: ERROR
+    org.springframework.kafka: ERROR
+    com.flipfoundry: INFO
+
+

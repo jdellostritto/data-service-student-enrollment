@@ -1,0 +1,75 @@
+{
+  "type": "record",
+  "name": "StudentProfile",
+  "namespace": "com.flipfoundry.platform.data.service.avro",
+  "fields": [
+    {
+      "name": "student_id",
+      "type": "string"
+    },
+    {
+      "name": "state_student_id",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "first_name",
+      "type": "string"
+    },
+    {
+      "name": "last_name",
+      "type": "string"
+    },
+    {
+      "name": "date_of_birth",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "grade_level",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "enrollment_id",
+      "type": "string"
+    },
+    {
+      "name": "school_id",
+      "type": "string"
+    },
+    {
+      "name": "district_id",
+      "type": "string"
+    },
+    {
+      "name": "school_year",
+      "type": "string"
+    },
+    {
+      "name": "entry_date",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "exit_date",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "enrollment_status",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "student_updated_at",
+      "type": ["null", "long"],
+      "default": null
+    },
+    {
+      "name": "enrollment_updated_at",
+      "type": ["null", "long"],
+      "default": null
+    }
+  ]
+}

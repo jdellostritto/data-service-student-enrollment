@@ -1,0 +1,60 @@
+# ===============================
+# = SPRING DEFAULTS FOR LOCAL.
+# ===============================
+debug: false
+spring:
+  # ===============================
+  # = Spring Cassandra.
+  # ===============================
+  cassandra:
+    contact-points: cluster1-dc1-service.cassandra.svc.cluster.local
+    keyspace-name: student_enrollment_prod
+    local-datacenter: dc1
+    port: 9042
+    schema-action: NONE
+  # ===============================
+  # = Spring Kafka.
+  # ===============================
+  kafka:
+    # = 1. Kafka General properties.
+    properties:
+      bootstrap:
+        servers: kafka.confluent.svc.cluster.local:9092
+      schema:
+        registry:
+          url: http://schemaregistry.confluent.svc.cluster.local:8081
+    # = 2. kafka Consumer (For Receiving Avros).
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+
+    # = 3. Kafka Producer (For sending Avros).
+    producer:
+      key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      properties:
+        retries: 10
+        request-timeout-ms-config: 120000
+    # = 4. Kafka Streams.
+    streams:
+      application-id: student_enrollment_service_k8s
+      properties:
+        processing:
+          guarantee: exactly_once
+        replication:
+          factor: 3
+        retries: 3
+        retry:
+          backoff:
+            ms: 250
+        commit:
+          interval:
+            ms: 100
+        state:
+          dir: /mnt/kafka-streams-store
+        num:
+          stream:
+            threads: 1
+        "[default.deserialization.exception.handler]": org.apache.kafka.streams.errors.LogAndContinueExceptionHandler
+        "[default.production.exception.handler]": com.flipfoundry.platform.data.service.kafka.utils.CustomProductionExceptionHandler

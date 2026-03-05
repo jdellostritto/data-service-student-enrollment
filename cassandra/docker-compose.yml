@@ -1,0 +1,38 @@
+version: '3.4'
+services:
+  cass:
+    image: cassandra:3.11.10
+    container_name: cass
+    hostname: cass
+    mem_limit: 3g
+    healthcheck:
+      test: [ "CMD", "cqlsh", "-u", "cassandra", "-p", "cassandra", "-e", "describe keyspaces" ]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+    ports:
+      - "9042:9042"
+    volumes:
+      - ./data/cass:/var/lib/cassandra
+      - ./etc/cass:/etc/cassandra
+    networks:
+      - flipfoundry
+
+  init-db:
+    image: cassandra:3.11.10
+    container_name: cassandra-init
+    depends_on:
+      cass:
+        condition: service_healthy
+    volumes:
+      - ./init-db.sh:/init-db.sh:ro
+    entrypoint: bash -c "/init-db.sh"
+    environment:
+      - CASSANDRA_HOST=cass
+      - CASSANDRA_PORT=9042
+    networks:
+      - flipfoundry
+
+networks:
+  flipfoundry:
+    driver: bridge

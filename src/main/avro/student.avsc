@@ -1,0 +1,39 @@
+{
+  "type": "record",
+  "name": "Student",
+  "namespace": "com.flipfoundry.platform.data.service.avro",
+  "fields": [
+    {
+      "name": "student_id",
+      "type": "string"
+    },
+    {
+      "name": "state_student_id",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "first_name",
+      "type": "string"
+    },
+    {
+      "name": "last_name",
+      "type": "string"
+    },
+    {
+      "name": "date_of_birth",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "grade_level",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "updated_at",
+      "type": ["null", "long"],
+      "default": null
+    }
+  ]
+}

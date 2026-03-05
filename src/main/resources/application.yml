@@ -1,0 +1,40 @@
+# ===============================
+# = Spring Profiles
+# ===============================
+spring:
+  profiles:
+    active: default
+
+# ===============================
+# = Actuator.
+# ===============================
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: ALWAYS
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health
+  health:
+    defaults:
+      enabled: false
+  server:
+    port: 9001
+
+# ===============================
+# = Server Ports.
+# ===============================
+server:
+  port: 8700
+
+# ===============================
+# = OpenTelemetry - Disabled for Development
+# ===============================
+otel:
+  sdk:
+    disabled: true
+

@@ -1,0 +1,20 @@
+version: '3.4'
+services:
+  app:
+    image: ghcr.io/flipfoundry/data-service-student-enrollment:latest
+    container_name: data-service-student-enrollment
+    networks:
+      - flipfoundry
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_CASSANDRA_CONTACT_POINTS: cass
+      SPRING_CASSANDRA_PORT: 9042
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: broker:29092
+      CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+    ports:
+      - 8700:8700
+      - 9001:9001
+
+networks:
+  flipfoundry:
+    driver: bridge

@@ -1,0 +1,217 @@
+plugins {
+  id 'org.springframework.boot' version '3.5.11'
+  id 'io.spring.dependency-management' version '1.1.4'
+  id 'java'
+  id 'java-library'
+  id 'com.google.cloud.tools.jib' version '3.4.0'
+  id 'com.github.davidmc24.gradle.plugin.avro' version '1.9.1'
+  id 'jacoco'
+  id "org.sonarqube" version "7.1.0.6387"
+  id "org.springdoc.openapi-gradle-plugin" version "1.9.0"
+}
+
+group = 'com.flipfoundry'
+version = '0.1.0-SNAPSHOT'
+java {
+  sourceCompatibility = '21'
+  targetCompatibility = '21'
+}
+
+configurations {
+  compileOnly {
+    extendsFrom annotationProcessor
+  }
+}
+
+repositories {
+  mavenCentral()
+  maven {
+    url = "https://packages.confluent.io/maven"
+  }
+  gradlePluginPortal()
+}
+
+dependencies {
+  /* Spring Boot Starters */
+  implementation 'org.springframework.boot:spring-boot-starter-actuator'
+  implementation 'org.springframework.boot:spring-boot-starter-logging'
+  implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+  /* OpenTelemetry Spring Boot Starter - zero-code instrumentation */
+  implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter:2.17.0'
+
+  /* AOP / AspectJ for metrics interception */
+  implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+  /* Springdoc OpenAPI */
+  implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.7.0'
+  implementation 'org.springdoc:springdoc-openapi-starter-webflux-api:2.7.0'
+
+  /* WebFlux for reactive streams */
+  implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+  /* Lombok */
+  compileOnly 'org.projectlombok:lombok'
+  annotationProcessor 'org.projectlombok:lombok'
+
+  /* Cassandra */
+  implementation 'org.springframework.boot:spring-boot-starter-data-cassandra'
+
+  /* Kafka Streams & Clients */
+  implementation 'org.apache.kafka:kafka-streams:3.9.0'
+  implementation 'org.apache.kafka:kafka-clients:3.9.0'
+  implementation 'org.springframework.kafka:spring-kafka:3.3.1'
+  testImplementation 'org.springframework.kafka:spring-kafka-test:3.3.1'
+  testImplementation 'org.apache.kafka:kafka-streams-test-utils:3.8.0'
+
+  /* Confluent Avro & Schema Registry */
+  implementation 'org.apache.avro:avro:1.12.1'
+  implementation 'io.confluent:kafka-streams-avro-serde:7.8.0'
+
+  /* Configuration Processor */
+  implementation 'org.springframework.boot:spring-boot-configuration-processor'
+
+  /* Utilities */
+  implementation 'commons-beanutils:commons-beanutils:1.9.4'
+
+  /* Testing */
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testImplementation 'io.projectreactor:reactor-test'
+  testImplementation 'org.testcontainers:kafka:1.20.1'
+  testImplementation 'org.testcontainers:junit-jupiter:1.20.1'
+
+}
+
+jib {
+  from {
+    image = "ghcr.io/jdellostritto/docker-jdk-base/jdk-alpine:latest"
+  }
+  to {
+    image = "ghcr.io/flipfoundry/data-service-student-enrollment"
+    tags = ["latest", "${version}"]
+  }
+  container {
+    appRoot = '/usr/app'
+    user = 'appuser'
+    jvmFlags = ['-Xms512m', '-Xmx1024m']
+    ports = ['8700', '9001']
+    workingDirectory = '/usr/app'
+    volumes = ['/usr/app/logs']
+    creationTime = 'USE_CURRENT_TIMESTAMP'
+  }
+  allowInsecureRegistries = false
+}
+
+testing {
+  suites {
+    test {
+      useJUnitJupiter()
+    }
+    integrationTest(JvmTestSuite) {
+      dependencies {
+        implementation project()
+        /* webflux  */
+        implementation 'org.springframework.boot:spring-boot-starter-webflux'
+        implementation 'org.springframework.boot:spring-boot-starter-test'
+        
+        /* Kafka Streams & Clients */
+        implementation 'org.apache.kafka:kafka-streams:3.9.0'
+        implementation 'org.apache.kafka:kafka-clients:3.9.0'
+        
+        /* JSON Serialization */
+        implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+        
+        /* Testcontainers */
+        implementation 'org.testcontainers:kafka:1.20.1'
+        implementation 'org.testcontainers:cassandra:1.20.1'
+        implementation 'org.testcontainers:junit-jupiter:1.20.1'
+        
+        /* Cassandra Driver & Spring Data */
+        implementation 'com.datastax.oss:java-driver-core:4.17.0'
+        implementation 'org.springframework.boot:spring-boot-starter-data-cassandra'
+        
+        /* Avro for integration tests */
+        implementation 'org.apache.avro:avro:1.12.1'
+        implementation 'io.confluent:kafka-streams-avro-serde:7.8.0'
+        
+        /* Mockito for test configuration */
+        implementation 'org.mockito:mockito-core:5.7.0'
+      }
+    }
+  }
+}
+test {
+  finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test, integrationTest
+    sourceSets sourceSets.main
+    executionData test, integrationTest
+    reports {
+        xml.required = true
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+}
+
+sonar {
+    properties {
+        
+        // Project identification
+        property "sonar.projectKey", "jdellostritto_data-service-student-enrollment"
+        property 'sonar.projectName', 'Data Service Student Enrollment'
+        property "sonar.organization", "jdellostritto"
+        
+        // Source encoding
+        property 'sonar.sourceEncoding', 'UTF-8'
+        
+        // Java version
+        property 'sonar.java.source', '21'
+        property 'sonar.java.target', '21'
+        
+        // Test results
+        property 'sonar.junit.reportPaths', 'build/test-results/test/*.xml,build/test-results/integrationTest/*.xml'
+        
+        // Code coverage with JaCoCo
+        property 'sonar.java.coveragePlugin', 'jacoco'
+        property 'sonar.coverage.jacoco.xmlReportPaths', 'build/reports/jacoco/test/jacocoTestReport.xml'
+        
+        // Exclusions (optional)
+        property 'sonar.exclusions', '**/generated/**,**/config/**'
+    }
+}
+
+
+tasks.withType(JavaCompile) {
+  options.encoding = 'UTF-8'
+}
+
+tasks['sonarqube'].dependsOn test
+
+// This adds HARNESS_JAVA_AGENT to the testing command if it's
+// provided through the command line.
+// Local builds will still remain same as it only adds if the
+// parameter is provided.
+tasks.withType(Test) {
+  if(System.getProperty("HARNESS_JAVA_AGENT")) {
+    jvmArgs += [System.getProperty("HARNESS_JAVA_AGENT")]
+  }
+}
+
+// This makes sure that any test tasks for subprojects don't
+// fail in case the test filter does not match.
+gradle.projectsEvaluated {
+  tasks.withType(Test) {
+    filter {
+      setFailOnNoMatchingTests(false)
+    }
+  }
+}
+
+// OpenAPI Gradle Plugin Configuration
+openApi {
+  apiDocsUrl = "http://localhost:8700/v3/api-docs.yaml"
+  outputDir = file("\$buildDir/openapi")
+  outputFileName = "openapi.yaml"
+  waitTimeInSeconds = 30
+}

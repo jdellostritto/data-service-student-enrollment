@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "name": "StudentProfileKey",
+  "namespace": "com.flipfoundry.platform.data.service.avro",
+  "fields": [
+    {
+      "name": "student_id",
+      "type": "string"
+    }
+  ]
+}
