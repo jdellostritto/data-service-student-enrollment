@@ -4,7 +4,7 @@
 
 # OS Detection: Use gradlew.bat on Windows, ./gradlew on Unix/Linux/Mac
 ifeq ($(OS),Windows_NT)
-    GRADLEW := ./gradlew.bat
+    GRADLEW := gradlew.bat
 else
     GRADLEW := ./gradlew
 endif
@@ -103,7 +103,7 @@ clean:
 sonar:
 	$(GRADLEW) test integrationTest jacocoTestReport sonarqube
 
-package: build
+package:
 	$(GRADLEW) build -x test
 
 bootrun:
@@ -146,15 +146,6 @@ generate-data-mock:
 	@echo "Mock run (no Kafka connection)..."
 	cd data-generator && python data_generator.py --mock --records 25
 
-
-# Run Static code analysis
-sonar:
-	@if [ -z "$(SONAR_TOKEN)" ]; then \
-		echo "⚠️  SONAR_TOKEN not set. Skipping SonarQube analysis."; \
-		$(GRADLEW) build --no-configuration-cache; \
-	else \
-		$(GRADLEW) build sonar --no-configuration-cache -Dsonar.token=$(SONAR_TOKEN); \
-	fi
 # PRUNE
 
 prune:
