@@ -1,5 +1,9 @@
 # Student Enrollment Data Service
 
+[![CI](https://github.com/YOUR_USERNAME/data-service-student-enrollment/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/data-service-student-enrollment/actions/workflows/ci.yml)
+[![Code Quality](https://github.com/YOUR_USERNAME/data-service-student-enrollment/actions/workflows/sonar.yml/badge.svg)](https://github.com/YOUR_USERNAME/data-service-student-enrollment/actions/workflows/sonar.yml)
+[![Release](https://img.shields.io/github/v/release/YOUR_USERNAME/data-service-student-enrollment?logo=github)](https://github.com/YOUR_USERNAME/data-service-student-enrollment/releases)
+
 A modern Kafka Streams application for processing student enrollment data with Cassandra persistence and Docker Compose orchestration.
 
 **Quick Start:** See [QUICKSTART.md](QUICKSTART.md) for 5-minute setup.

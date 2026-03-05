@@ -1,0 +1,28 @@
+# Repository Code Owners
+# When changes are made to these files, they request review from the specified owners
+
+# Architecture and Core Processors
+src/main/java/com/flipfoundry/platform/data/service/processor/ @* 
+
+# Cassandra Data Access
+src/main/java/com/flipfoundry/platform/data/service/cassandra/ @*
+
+# Configuration
+src/main/resources/ @*
+
+# Tests
+src/test/ @*
+src/integrationTest/ @*
+
+# Build and CI/CD
+build.gradle @*
+Makefile @*
+.github/workflows/ @*
+
+# Documentation
+README.md @*
+QUICKSTART.md @*
+docs/ @*
+
+# Default: any code change requires review
+* @*

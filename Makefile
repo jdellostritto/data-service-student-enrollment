@@ -1,4 +1,4 @@
-.PHONY: run run-db stop delete image package clean build run-sonar avro kube-apply-bash kube-delete-bash kube-apply-ps kube-delete-ps prune run-cassandra run-confluent run-app stop-cassandra stop-confluent stop-app stop-all status logs sonar test integrationTest
+.PHONY: run run-db stop delete image package clean build run-sonar avro kube-apply-bash kube-delete-bash kube-apply-ps kube-delete-ps prune run-cassandra run-confluent run-app stop-cassandra stop-confluent stop-app stop-all status logs sonar test integrationTest package
 # Load environment variables from .env file if it exists
 -include .env
 
@@ -98,6 +98,13 @@ integrationTest: build
 
 clean:
 	gradle clean
+
+# QUALITY & ANALYSIS TARGETS
+sonar:
+	$(GRADLEW) test integrationTest jacocoTestReport sonarqube
+
+package: build
+	$(GRADLEW) build -x test
 
 bootrun:
 	gradle bootRun
