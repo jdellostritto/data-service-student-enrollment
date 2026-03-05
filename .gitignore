@@ -8,6 +8,14 @@ cassandra/data/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+
+### Environment & Secrets ###
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
 ### STS ###
 .apt_generated
 .classpath
