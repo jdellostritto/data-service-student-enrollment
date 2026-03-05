@@ -1,8 +1,8 @@
 # Student Enrollment Data Service
 
-[![CI](https://github.com/YOUR_USERNAME/data-service-student-enrollment/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/data-service-student-enrollment/actions/workflows/ci.yml)
-[![Code Quality](https://github.com/YOUR_USERNAME/data-service-student-enrollment/actions/workflows/sonar.yml/badge.svg)](https://github.com/YOUR_USERNAME/data-service-student-enrollment/actions/workflows/sonar.yml)
-[![Release](https://img.shields.io/github/v/release/YOUR_USERNAME/data-service-student-enrollment?logo=github)](https://github.com/YOUR_USERNAME/data-service-student-enrollment/releases)
+[![CI](https://github.com/jdellostritto/data-service-student-enrollment/actions/workflows/ci.yml/badge.svg)](https://github.com/jdellostritto/data-service-student-enrollment/actions/workflows/ci.yml)
+[![Code Quality](https://github.com/jdellostritto/data-service-student-enrollment/actions/workflows/sonar.yml/badge.svg)](https://github.com/jdellostritto/data-service-student-enrollment/actions/workflows/sonar.yml)
+[![Release](https://img.shields.io/github/v/release/jdellostritto/data-service-student-enrollment?logo=github)](https://github.com/jdellostritto/data-service-student-enrollment/releases)
 
 A modern Kafka Streams application for processing student enrollment data with Cassandra persistence and Docker Compose orchestration.
 
@@ -532,6 +532,14 @@ docker rm -f data-service-student-enrollment
 # Start fresh
 make run-stack
 ```
+
+---
+
+## Contributors
+
+**Maintainer:** [@jdellostritto](https://github.com/jdellostritto)
+
+Contributions are welcome! See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for guidelines.
 
 ---
 

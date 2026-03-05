@@ -2,27 +2,27 @@
 # When changes are made to these files, they request review from the specified owners
 
 # Architecture and Core Processors
-src/main/java/com/flipfoundry/platform/data/service/processor/ @* 
+src/main/java/com/flipfoundry/platform/data/service/processor/ @jdellostritto
 
 # Cassandra Data Access
-src/main/java/com/flipfoundry/platform/data/service/cassandra/ @*
+src/main/java/com/flipfoundry/platform/data/service/cassandra/ @jdellostritto
 
 # Configuration
-src/main/resources/ @*
+src/main/resources/ @jdellostritto
 
 # Tests
-src/test/ @*
-src/integrationTest/ @*
+src/test/ @jdellostritto
+src/integrationTest/ @jdellostritto
 
 # Build and CI/CD
-build.gradle @*
-Makefile @*
-.github/workflows/ @*
+build.gradle @jdellostritto
+Makefile @jdellostritto
+.github/workflows/ @jdellostritto
 
 # Documentation
-README.md @*
-QUICKSTART.md @*
-docs/ @*
+README.md @jdellostritto
+QUICKSTART.md @jdellostritto
+docs/ @jdellostritto
 
 # Default: any code change requires review
-* @*
+* @jdellostritto
