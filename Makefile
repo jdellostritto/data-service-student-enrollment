@@ -88,16 +88,16 @@ logs: logs-cassandra logs-confluent logs-app
 
 # BUILD TARGETS
 build:
-	gradle build --info
+	$(GRADLEW) build --info
 
 test: build
-	gradle test integrationTest --rerun-tasks
+	$(GRADLEW) test integrationTest --rerun-tasks
 
 integrationTest: build
-	gradle integrationTest --rerun-tasks
+	$(GRADLEW) integrationTest --rerun-tasks
 
 clean:
-	gradle clean
+	$(GRADLEW) clean
 
 # QUALITY & ANALYSIS TARGETS
 sonar:
@@ -107,10 +107,10 @@ package: build
 	$(GRADLEW) build -x test
 
 bootrun:
-	gradle bootRun
+	$(GRADLEW) bootRun
 
 image: build
-	gradle jibDockerBuild
+	$(GRADLEW) jibDockerBuild
 
 run:
 	$(COMPOSE) up

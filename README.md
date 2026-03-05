@@ -15,6 +15,7 @@ A modern Kafka Streams application for processing student enrollment data with C
 The Student Enrollment Data Service ingests student and enrollment data from source systems, processes them through Kafka Streams topology, and materializes the results in Cassandra for efficient querying.
 
 **Key Functions:**
+
 - **Validate** incoming student and enrollment records
 - **Enrich** by joining student data with enrollment records  
 - **Deduplicate** out-of-order events (keeps latest by timestamp)
@@ -22,6 +23,7 @@ The Student Enrollment Data Service ingests student and enrollment data from sou
 - **Materialize** Kafka Streams state stores for interactive queries
 
 **Use Cases:**
+
 - Real-time student profile materialization
 - Multi-source data consolidation
 - Event-driven enrollment updates
@@ -40,6 +42,7 @@ The Student Enrollment Data Service ingests student and enrollment data from sou
 #### Stage 1: Input Validation (KtableProcessor)
 
 **Node 1a - Deserialization Check:**
+
 - Consume raw bytes from source topics
 - Check for null values (tombstones)
 - Branch into valid and invalid streams
@@ -47,11 +50,13 @@ The Student Enrollment Data Service ingests student and enrollment data from sou
 - **Invalid:** Send to DLQ (dead letter queue)
 
 **Node 1b - Avro Deserialization:**
+
 - Deserialize valid records from raw bytes to Avro objects
 - Student → `Student` Avro class
 - StudentEnrollment → `StudentEnrollment` Avro class
 
 **Node 1c - KTable Materialization (Reduce Logic):**
+
 - Create `STUDENTS-MV` state store (Latest student by timestamp)
 - Create `ENROLLMENTS-MV` state store (Latest enrollment by timestamp)
 - Keep only the newest record for each key (deduplication)
@@ -59,6 +64,7 @@ The Student Enrollment Data Service ingests student and enrollment data from sou
 #### Stage 2: Join & Enrichment (JoinProcessor)
 
 **Node 2 - Foreign Key Join:**
+
 - Join `ENROLLMENTS-MV` KTable with `STUDENTS-MV` KTable
 - Link: `student_id` in enrollment → `student_id` in student
 - Produces combined `StudentProfile` records
@@ -67,12 +73,14 @@ The Student Enrollment Data Service ingests student and enrollment data from sou
 #### Stage 3: Persistence
 
 **Node 3 - Cassandra Write:**
+
 - Extract fields from `StudentProfile` Avro object
 - Map to `StudentProfile` entity model
 - Persist to `student_profiles` Cassandra table
 - Null handling with defaults via custom BeanUtils
 
 **Node 4 - Kafka Topic (Durable Log):**
+
 - Output topic: `student-profiles`
 - Provides event sourcing capability
 - Enables replay and recovery
@@ -80,6 +88,7 @@ The Student Enrollment Data Service ingests student and enrollment data from sou
 ### Data Models
 
 **Student**
+
 ```
 student_id* (PK)
 ├─ state_student_id
@@ -91,6 +100,7 @@ student_id* (PK)
 ```
 
 **StudentEnrollment**
+
 ```
 enrollment_id* (PK)
 ├─ student_id (FK → Student)
@@ -104,6 +114,7 @@ enrollment_id* (PK)
 ```
 
 **StudentProfile** (Join Result - Denormalized)
+
 ```
 student_id* (PK)
 ├─ (all Student fields)
@@ -122,11 +133,13 @@ Output State:    Event1 (ts=100) ← Newest
 ```
 
 **Foreign Key Join:**
+
 - Joins across non-identical keys (enrollment.student_id → student.student_id)
 - Requires both sides to be KTables (co-partitioned)
 - Streams automatically handles distributed state synchronization
 
 **Compacted Topics:**
+
 - `students` and `student-enrollments` use log compaction
 - Only latest value per key retained on disk
 - Enables KTable reconstruction from topic replay
