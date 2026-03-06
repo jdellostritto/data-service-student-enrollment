@@ -1,11 +1,7 @@
 HELP.md
 .gradle
-gradle/
-gradlew
-gradlew.bat
 build/
 cassandra/data/
-!gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 
