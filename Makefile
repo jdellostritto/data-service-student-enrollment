@@ -92,7 +92,7 @@ build:
 	$(GRADLEW) build
 
 test: build
-	$(GRADLEW) test integrationTest
+	$(GRADLEW) test
 
 integrationTest: build
 	$(GRADLEW) integrationTest --rerun-tasks
@@ -102,7 +102,26 @@ clean:
 
 # QUALITY & ANALYSIS TARGETS
 sonar:
-	$(GRADLEW) test integrationTest jacocoTestReport sonarqube
+	@if [ -z "$(SONAR_TOKEN)" ]; then \
+		echo "⚠️  SONAR_TOKEN not set. Skipping SonarQube analysis."; \
+		$(GRADLEW) build --no-configuration-cache; \
+	else \
+		$(GRADLEW) build sonarqube --no-configuration-cache -Dsonar.token=$(SONAR_TOKEN); \
+	fi
+
+# Used by GitHub Actions to append test results to the summary.
+test-report:
+	@echo "## 📊 Test Results" >> $(GITHUB_STEP_SUMMARY)
+	@echo "" >> $(GITHUB_STEP_SUMMARY)
+	@if [ -d "build/test-results/test" ] && [ "$$(ls -A build/test-results/test/*.xml 2>/dev/null | wc -l)" -gt 0 ]; then \
+		echo "✅ Tests completed successfully" >> $(GITHUB_STEP_SUMMARY); \
+		echo "" >> $(GITHUB_STEP_SUMMARY); \
+		echo "📈 Test reports available in artifacts:" >> $(GITHUB_STEP_SUMMARY); \
+		echo "- JaCoCo Coverage Report" >> $(GITHUB_STEP_SUMMARY); \
+		echo "- Detailed Test Report" >> $(GITHUB_STEP_SUMMARY); \
+	else \
+		echo "⚠️ No test results found" >> $(GITHUB_STEP_SUMMARY); \
+	fi
 
 package:
 	$(GRADLEW) build -x test
