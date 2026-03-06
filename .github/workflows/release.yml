@@ -26,10 +26,10 @@ jobs:
           cache: gradle
 
       - name: Run tests
-        run: make test
+        run: ./gradlew test integrationTest --rerun-tasks
 
       - name: Build release package
-        run: make package
+        run: ./gradlew build -x test
 
       - name: Create Release
         id: create_release
