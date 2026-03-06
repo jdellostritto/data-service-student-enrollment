@@ -92,7 +92,7 @@ build:
 	$(GRADLEW) build
 
 test: build
-	$(GRADLEW) test integrationTest --rerun-tasks
+	$(GRADLEW) test integrationTest
 
 integrationTest: build
 	$(GRADLEW) integrationTest --rerun-tasks
