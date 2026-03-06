@@ -88,7 +88,8 @@ logs: logs-cassandra logs-confluent logs-app
 
 # BUILD TARGETS
 build:
-	$(GRADLEW) build --info
+	$(GRADLEW) clean
+	$(GRADLEW) build
 
 test: build
 	$(GRADLEW) test integrationTest --rerun-tasks
