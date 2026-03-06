@@ -25,11 +25,14 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Install make
+        run: sudo apt-get update && sudo apt-get install -y make
+
       - name: Run tests
-        run: ./gradlew test integrationTest --rerun-tasks
+        run: make test
 
       - name: Build release package
-        run: ./gradlew build -x test
+        run: make package
 
       - name: Create Release
         id: create_release
