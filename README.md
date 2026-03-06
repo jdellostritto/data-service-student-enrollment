@@ -1,6 +1,6 @@
 # Student Enrollment Data Service
 
-[![CI](https://github.com/jdellostritto/data-service-student-enrollment/actions/workflows/ci.yml/badge.svg)](https://github.com/jdellostritto/data-service-student-enrollment/actions/workflows/ci.yml)
+[![CI](https://github.com/jdellostritto/data-service-student-enrollment/actions/workflows/build.yml/badge.svg)](https://github.com/jdellostritto/data-service-student-enrollment/actions/workflows/build.yml)
 [![Code Quality](https://github.com/jdellostritto/data-service-student-enrollment/actions/workflows/sonar.yml/badge.svg)](https://github.com/jdellostritto/data-service-student-enrollment/actions/workflows/sonar.yml)
 [![Release](https://img.shields.io/github/v/release/jdellostritto/data-service-student-enrollment?logo=github)](https://github.com/jdellostritto/data-service-student-enrollment/releases)
 
